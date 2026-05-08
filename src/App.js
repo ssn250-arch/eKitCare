@@ -104,24 +104,27 @@ export default function App() {
     setIsDownloading(true);
     setIsPdfGenerating(true);
 
-    // Short delay to ensure state update renders any print-specific adjustments
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    // Beri masa untuk DOM apply kelebaran 1084px sepenuhnya
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
     const element = document.getElementById('pdf-content');
 
     const opt = {
-      margin: 5, // Margin 10mm untuk semua sisi bagi memaksimumkan ruang dan elak terpotong
+      margin: 5, // Margin 5mm
       filename: `Borang_BKKP-06-03_${metadata.jabatan || 'Laporan'}.pdf`,
       image: { type: 'jpeg', quality: 1 },
       html2canvas: {
-        scale: 2, // Adjusted scale to balance size and quality
+        scale: 2,
         useCORS: true,
         letterRendering: true,
         scrollY: 0,
-        windowWidth: 1110 // Lebar A4 standard (landscape) supaya format jadual tidak lari
+        scrollX: 0, 
+        x: 0,
+        y: 0,
+        windowWidth: 1122 // Memaksa format kanvas selebar A4 Landscape 
       },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-      pagebreak: { mode: ['css', 'legacy'] } // Guna gabungan untuk memastikan pemotongan tepat
+      pagebreak: { mode: ['css', 'legacy'] }
     };
 
     try {
@@ -197,7 +200,7 @@ export default function App() {
   const fileInputRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [signature, setSignature] = useState(null);
-  const [signatureMode, setSignatureMode] = useState('draw'); // 'draw' atau 'upload'
+  const [signatureMode, setSignatureMode] = useState('draw'); 
 
   const clearSignature = () => {
     if (signatureMode === 'draw') {
@@ -234,7 +237,7 @@ export default function App() {
     const ctx = canvasRef.current.getContext('2d');
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
-    ctx.strokeStyle = '#000000'; // Dakwat hitam
+    ctx.strokeStyle = '#000000';
     ctx.beginPath();
     ctx.moveTo(x, y);
   };
@@ -307,7 +310,6 @@ export default function App() {
     };
     reader.readAsDataURL(file);
   };
-  // --- TAMAT LOGIK TANDATANGAN ---
 
   const handleMetadataChange = (e) => {
     const { name, value } = e.target;
@@ -324,7 +326,6 @@ export default function App() {
   // --- LOGIK HALAMAN UTAMA (LANDING PAGE) ---
   const renderLanding = () => (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex flex-col font-sans">
-      {/* Header */}
       <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
@@ -347,7 +348,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Hero */}
       <main className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         <div className="text-center max-w-4xl mx-auto">
           <div className="inline-flex items-center space-x-2 bg-blue-100/50 text-blue-800 px-4 py-1.5 rounded-full text-sm font-semibold mb-6 border border-blue-200">
@@ -381,7 +381,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Features Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-16 md:mt-24 max-w-5xl mx-auto w-full">
           <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-blue-100 hover:shadow-md transition-all group">
             <div className="bg-blue-50 w-14 h-14 rounded-xl flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform">
@@ -407,12 +406,10 @@ export default function App() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="py-8 text-center text-slate-500 text-sm border-t border-slate-200 mt-auto bg-white/50">
         <p>&copy; {new Date().getFullYear()} Kolej Teknologi Termaju Jabatan Tenaga Manusia (ADTEC) Kampus Sandakan.<br className="md:hidden" /> Hak cipta terpelihara.</p>
       </footer>
 
-      {/* Modal Log Masuk Admin (Digunakan di Landing Page) */}
       {showLogin && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm transition-opacity">
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 relative">
@@ -1003,7 +1000,6 @@ export default function App() {
     const renderReportPage = (pageItems, startIndex, isLastPage, itemsPerPage = 10, pageNum, totalPages) => {
       const displayItems = [...pageItems];
       if (isLastPage) {
-        // Pad with empty rows to fill up the last page table
         while(displayItems.length < itemsPerPage) {
           displayItems.push({ id: `empty-${displayItems.length}`, isEmpty: true });
         }
@@ -1011,12 +1007,15 @@ export default function App() {
 
       return (
         <div 
-          className={`bg-white ${isPdfGenerating ? 'px-8 py-4 shadow-none m-0 border-0' : 'p-8 md:p-10 shadow-lg mb-8'} print:shadow-none print:p-0 print:m-0 w-full print:mb-0 flex flex-col relative`}
+          className={`bg-white ${isPdfGenerating ? 'shadow-none m-0 border-0' : 'p-8 md:p-10 shadow-lg mb-8'} flex flex-col relative`}
           style={{ 
-            width: isPdfGenerating ? '277mm' : 'auto', // Tetapkan lebar tepat A4 tolak margin
-            minHeight: isPdfGenerating ? '160mm' : 'auto',
+            // Tetapkan KUNCI SAIZ PIKSEL di sini supaya ia tidak sempit di dalam peranti mudah alih 
+            width: isPdfGenerating ? '1084px' : '100%', 
+            height: isPdfGenerating ? '755px' : 'auto', 
+            padding: isPdfGenerating ? '40px' : undefined,
             boxSizing: 'border-box',
-            pageBreakInside: 'avoid'
+            pageBreakInside: 'avoid',
+            overflow: 'hidden' 
           }}
         >
           
@@ -1025,7 +1024,7 @@ export default function App() {
               src="https://wsrv.nl/?url=drive.google.com/thumbnail?id=1i9Pz_cC5m-D9y55m_chsPG4t6CFj_PAe&sz=w1000" 
               alt="Logo ADTEC JTM Kampus Sandakan" 
               crossOrigin="anonymous"
-              className={`w-auto object-contain ${isPdfGenerating ? 'h-16' : 'h-24 md:h-30 print:h-30'}`}
+              className={`w-auto object-contain ${isPdfGenerating ? 'h-20' : 'h-24 md:h-30'}`}
               onError={(e) => {
                 e.target.onerror = null; 
                 e.target.style.display = 'none';
@@ -1045,14 +1044,14 @@ export default function App() {
               </div>
             </div>
 
-            <div className="absolute right-2 md:right-4 bottom-0 text-right text-sm font-bold text-black leading-tight">
+            <div className="absolute right-0 bottom-0 text-right text-sm font-bold text-black leading-tight">
               No. Dokumen:<br/>
               BKKP-06-03
             </div>
           </div>
 
-          <div className={`text-center ${isPdfGenerating ? 'mb-3' : 'mb-5'} px-4`}>
-            <h1 className="text-base md:text-lg font-bold uppercase">SENARAI SEMAK KEMUDAHAN DAN PERALATAN PERTOLONGAN CEMAS</h1>
+          <div className={`text-center ${isPdfGenerating ? 'mb-4' : 'mb-5'} px-4`}>
+            <h1 className="text-lg font-bold uppercase">SENARAI SEMAK KEMUDAHAN DAN PERALATAN PERTOLONGAN CEMAS</h1>
           </div>
 
           <div className={`${isPdfGenerating ? 'mb-2' : 'mb-3'} text-sm flex items-center`}>
@@ -1063,29 +1062,29 @@ export default function App() {
           <table className={`w-full border-collapse border border-black ${isPdfGenerating ? 'mb-2' : 'mb-6'} text-sm`} style={{ tableLayout: 'fixed' }}>
             <thead>
               <tr className="bg-gray-200 print:bg-[#e5e7eb] print:text-black">
-                <th className={`border border-black px-1 py-1 w-[6%] text-center align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Bil.</th>
-                <th className={`border border-black px-2 py-1 w-[34%] text-left align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Kemudahan / Peralatan</th>
-                <th className={`border border-black px-1 py-1 w-[11%] text-center align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Memuaskan</th>
-                <th className={`border border-black px-1 py-1 w-[13%] text-center align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Tidak<br/>Memuaskan</th>
-                <th className={`border border-black px-2 py-1 w-[18%] text-center align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Catatan</th>
-                <th className={`border border-black px-2 py-1 w-[18%] text-center align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Tindakan</th>
+                <th className={`border border-black px-1 py-1 w-[6%] text-center align-middle font-bold ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>Bil.</th>
+                <th className={`border border-black px-2 py-1 w-[34%] text-left align-middle font-bold ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>Kemudahan / Peralatan</th>
+                <th className={`border border-black px-1 py-1 w-[11%] text-center align-middle font-bold ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>Memuaskan</th>
+                <th className={`border border-black px-1 py-1 w-[13%] text-center align-middle font-bold ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>Tidak<br/>Memuaskan</th>
+                <th className={`border border-black px-2 py-1 w-[18%] text-center align-middle font-bold ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>Catatan</th>
+                <th className={`border border-black px-2 py-1 w-[18%] text-center align-middle font-bold ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>Tindakan</th>
               </tr>
             </thead>
             <tbody>
               {displayItems.map((item, idx) => (
-                <tr key={item.id || idx} style={{ height: isPdfGenerating ? '35px' : '40px' }}>
-                  <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-[12px]' : ''}`}>
+                <tr key={item.id || idx} style={{ height: isPdfGenerating ? '42px' : '40px' }}>
+                  <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-sm' : ''}`}>
                     {item.isEmpty ? '' : startIndex + idx + 1}
                   </td>
-                  <td className={`border border-black px-2 py-0.5 text-left align-middle ${isPdfGenerating ? 'text-[12px] leading-tight' : ''}`}>{item.name || ''}</td>
-                  <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-lg' : 'text-xl'} font-bold`}>
+                  <td className={`border border-black px-2 py-0.5 text-left align-middle ${isPdfGenerating ? 'text-sm leading-tight' : ''}`}>{item.name || ''}</td>
+                  <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-2xl' : 'text-xl'} font-bold`}>
                     {!item.isEmpty && item.status === 'Memuaskan' ? '✓' : ''}
                   </td>
-                  <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-lg' : 'text-xl'} font-bold`}>
+                  <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-2xl' : 'text-xl'} font-bold`}>
                     {!item.isEmpty && item.status === 'Tidak Memuaskan' ? '✓' : ''}
                   </td>
-                  <td className={`border border-black px-2 py-0.5 text-left align-middle ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>{item.catatan || ''}</td>
-                  <td className={`border border-black px-2 py-0.5 text-left align-middle ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>{item.tindakan || ''}</td>
+                  <td className={`border border-black px-2 py-0.5 text-left align-middle ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>{item.catatan || ''}</td>
+                  <td className={`border border-black px-2 py-0.5 text-left align-middle ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>{item.tindakan || ''}</td>
                 </tr>
               ))}
             </tbody>
@@ -1116,7 +1115,6 @@ export default function App() {
             </div>
           </div>
           
-          {/* Nombor muka surat di bahagian bawah kanan */}
           <div className="text-right text-sm font-bold px-2 pt-2 text-gray-800">
             {pageNum}
           </div>
@@ -1126,9 +1124,8 @@ export default function App() {
 
     const renderReportPages = () => {
       const pages = [];
-      const itemsPerPage = 10; // Tukar kepada 10 supaya jadual tidak melimpah
+      const itemsPerPage = 10; 
       
-      // Pecahkan item kepada kumpulan (chunk) 10 item per muka surat
       for (let i = 0; i < checklist.length; i += itemsPerPage) {
         pages.push(checklist.slice(i, i + itemsPerPage));
       }
@@ -1153,7 +1150,6 @@ export default function App() {
     return (
       <div className={`bg-gray-100 min-h-screen py-8 print:py-0 print:bg-white flex justify-center pb-24 ${isPdfGenerating ? 'bg-white' : ''}`}>
         
-        {/* ACTION BAR ATAS */}
         <div className={`fixed bottom-0 left-0 right-0 md:top-0 md:bottom-auto bg-white border-t md:border-b border-gray-200 p-4 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.1)] md:shadow-md z-30 print:hidden ${isPdfGenerating ? 'hidden' : ''}`}>
           <div className="max-w-6xl mx-auto flex justify-between items-center px-2">
             <button 
@@ -1182,7 +1178,11 @@ export default function App() {
         </div>
 
         {/* CONTAINER KANDUNGAN PDF */}
-        <div id="pdf-content" className={`w-full max-w-6xl mx-auto ${isPdfGenerating ? 'bg-white' : 'md:mt-20'}`}>
+        <div 
+          id="pdf-content" 
+          className={isPdfGenerating ? 'bg-white absolute top-0 left-0 z-[-1]' : 'w-full max-w-6xl mx-auto md:mt-20'}
+          style={isPdfGenerating ? { width: '1084px', pointerEvents: 'none' } : {}}
+        >
           {renderReportPages()}
         </div>
         
