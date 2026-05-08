@@ -3,7 +3,7 @@ import {
   ClipboardCheck, Printer, ArrowLeft, Save, CheckCircle, 
   AlertCircle, FileText, X, PenTool, Upload, Plus, 
   Trash2, Lock, Unlock, LogIn, Download, Loader2,
-  ChevronRight, Shield, Activity // Tambahan icon baru
+  ChevronRight, Shield, Activity
 } from 'lucide-react';
 
 const standardItems = [
@@ -62,7 +62,7 @@ const senaraiPemeriksa = [
 ];
 
 export default function App() {
-  const [view, setView] = useState('landing'); // Tukar initial state kepada 'landing'
+  const [view, setView] = useState('landing');
   const [errorMsg, setErrorMsg] = useState('');
   const [selectedImage, setSelectedImage] = useState(null); 
   
@@ -110,7 +110,7 @@ export default function App() {
     const element = document.getElementById('pdf-content');
 
     const opt = {
-      margin: [25, 5, 15, 5], // Margin: [Atas, Kanan, Bawah, Kiri] dalam mm
+      margin: 5, // Margin 10mm untuk semua sisi bagi memaksimumkan ruang dan elak terpotong
       filename: `Borang_BKKP-06-03_${metadata.jabatan || 'Laporan'}.pdf`,
       image: { type: 'jpeg', quality: 1 },
       html2canvas: {
@@ -118,10 +118,10 @@ export default function App() {
         useCORS: true,
         letterRendering: true,
         scrollY: 0,
-        windowWidth: 1400 // Paksa saiz paparan desktop supaya format jadual tidak lari
+        windowWidth: 1110 // Lebar A4 standard (landscape) supaya format jadual tidak lari
       },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-      pagebreak: { mode: ['css', 'legacy'] } // Buang 'avoid-all' untuk benarkan pemotongan page
+      pagebreak: { mode: ['css', 'legacy'] } // Guna gabungan untuk memastikan pemotongan tepat
     };
 
     try {
@@ -1011,16 +1011,21 @@ export default function App() {
 
       return (
         <div 
-          className={`bg-white ${isPdfGenerating ? 'px-6 py-2 shadow-none m-0 border-0' : 'p-8 md:p-10 shadow-lg mb-8'} print:shadow-none print:p-0 print:m-0 w-full print:mb-0 flex flex-col relative`}
-          style={{ minHeight: isPdfGenerating ? '175mm' : 'auto', pageBreakInside: 'avoid' }}
+          className={`bg-white ${isPdfGenerating ? 'px-8 py-4 shadow-none m-0 border-0' : 'p-8 md:p-10 shadow-lg mb-8'} print:shadow-none print:p-0 print:m-0 w-full print:mb-0 flex flex-col relative`}
+          style={{ 
+            width: isPdfGenerating ? '277mm' : 'auto', // Tetapkan lebar tepat A4 tolak margin
+            minHeight: isPdfGenerating ? '160mm' : 'auto',
+            boxSizing: 'border-box',
+            pageBreakInside: 'avoid'
+          }}
         >
           
-          <div className={`relative ${isPdfGenerating ? 'mb-2 pt-2' : 'mb-6 pt-4'} flex flex-col items-center justify-center select-none`}>
+          <div className={`relative ${isPdfGenerating ? 'mb-2' : 'mb-6 pt-4'} flex flex-col items-center justify-center select-none`}>
             <img 
               src="https://wsrv.nl/?url=drive.google.com/thumbnail?id=1i9Pz_cC5m-D9y55m_chsPG4t6CFj_PAe&sz=w1000" 
               alt="Logo ADTEC JTM Kampus Sandakan" 
               crossOrigin="anonymous"
-              className={`w-auto object-contain ${isPdfGenerating ? 'h-24' : 'h-24 md:h-30 print:h-30'}`}
+              className={`w-auto object-contain ${isPdfGenerating ? 'h-16' : 'h-24 md:h-30 print:h-30'}`}
               onError={(e) => {
                 e.target.onerror = null; 
                 e.target.style.display = 'none';
@@ -1040,7 +1045,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="absolute right-0 bottom-0 text-right text-sm font-bold text-black leading-tight">
+            <div className="absolute right-2 md:right-4 bottom-0 text-right text-sm font-bold text-black leading-tight">
               No. Dokumen:<br/>
               BKKP-06-03
             </div>
@@ -1055,32 +1060,32 @@ export default function App() {
             <span className="font-semibold underline underline-offset-4 decoration-1">{metadata.jabatan || '<<Jabatan>>'}</span>
           </div>
 
-          <table className={`w-full border-collapse border border-black ${isPdfGenerating ? 'mb-3' : 'mb-6'} text-sm`}>
+          <table className={`w-full border-collapse border border-black ${isPdfGenerating ? 'mb-2' : 'mb-6'} text-sm`} style={{ tableLayout: 'fixed' }}>
             <thead>
               <tr className="bg-gray-200 print:bg-[#e5e7eb] print:text-black">
-                <th className="border border-black px-2 py-2 w-10 text-center align-middle font-bold">Bil.</th>
-                <th className="border border-black px-2 py-2 text-center align-middle font-bold">Kemudahan / Peralatan</th>
-                <th className="border border-black px-2 py-2 w-28 text-center align-middle font-bold">Memuaskan</th>
-                <th className="border border-black px-2 py-2 w-32 text-center align-middle font-bold">Tidak<br/>Memuaskan</th>
-                <th className="border border-black px-2 py-2 w-1/5 text-center align-middle font-bold">Catatan</th>
-                <th className="border border-black px-2 py-2 w-1/5 text-center align-middle font-bold">Tindakan</th>
+                <th className={`border border-black px-1 py-1 w-[6%] text-center align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Bil.</th>
+                <th className={`border border-black px-2 py-1 w-[34%] text-left align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Kemudahan / Peralatan</th>
+                <th className={`border border-black px-1 py-1 w-[11%] text-center align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Memuaskan</th>
+                <th className={`border border-black px-1 py-1 w-[13%] text-center align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Tidak<br/>Memuaskan</th>
+                <th className={`border border-black px-2 py-1 w-[18%] text-center align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Catatan</th>
+                <th className={`border border-black px-2 py-1 w-[18%] text-center align-middle font-bold ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>Tindakan</th>
               </tr>
             </thead>
             <tbody>
               {displayItems.map((item, idx) => (
-                <tr key={item.id || idx} className="h-8">
-                  <td className="border border-black px-2 py-1 text-center align-top">
+                <tr key={item.id || idx} style={{ height: isPdfGenerating ? '35px' : '40px' }}>
+                  <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-[12px]' : ''}`}>
                     {item.isEmpty ? '' : startIndex + idx + 1}
                   </td>
-                  <td className="border border-black px-2 py-1 align-top">{item.name || ''}</td>
-                  <td className="border border-black px-2 py-1 text-center align-middle text-xl font-bold">
+                  <td className={`border border-black px-2 py-0.5 text-left align-middle ${isPdfGenerating ? 'text-[12px] leading-tight' : ''}`}>{item.name || ''}</td>
+                  <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-lg' : 'text-xl'} font-bold`}>
                     {!item.isEmpty && item.status === 'Memuaskan' ? '✓' : ''}
                   </td>
-                  <td className="border border-black px-2 py-1 text-center align-middle text-xl font-bold">
+                  <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-lg' : 'text-xl'} font-bold`}>
                     {!item.isEmpty && item.status === 'Tidak Memuaskan' ? '✓' : ''}
                   </td>
-                  <td className="border border-black px-2 py-1 align-top text-xs">{item.catatan || ''}</td>
-                  <td className="border border-black px-2 py-1 align-top text-xs">{item.tindakan || ''}</td>
+                  <td className={`border border-black px-2 py-0.5 text-left align-middle ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>{item.catatan || ''}</td>
+                  <td className={`border border-black px-2 py-0.5 text-left align-middle ${isPdfGenerating ? 'text-[11px]' : 'text-xs'}`}>{item.tindakan || ''}</td>
                 </tr>
               ))}
             </tbody>
