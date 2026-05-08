@@ -110,7 +110,7 @@ export default function App() {
     const element = document.getElementById('pdf-content');
 
     const opt = {
-      margin: [5, 10, 5, 10], // Margin: [Atas, Kanan, Bawah, Kiri] dalam mm
+      margin: [25, 5, 15, 5], // Margin: [Atas, Kanan, Bawah, Kiri] dalam mm
       filename: `Borang_BKKP-06-03_${metadata.jabatan || 'Laporan'}.pdf`,
       image: { type: 'jpeg', quality: 1 },
       html2canvas: {
@@ -118,7 +118,7 @@ export default function App() {
         useCORS: true,
         letterRendering: true,
         scrollY: 0,
-        windowWidth: 1200 // Paksa saiz paparan desktop supaya format jadual tidak lari
+        windowWidth: 1400 // Paksa saiz paparan desktop supaya format jadual tidak lari
       },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
       pagebreak: { mode: ['css', 'legacy'] } // Buang 'avoid-all' untuk benarkan pemotongan page
