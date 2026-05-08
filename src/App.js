@@ -104,13 +104,13 @@ export default function App() {
     setIsDownloading(true);
     setIsPdfGenerating(true);
 
-    // Beri masa untuk DOM apply kelebaran 1084px sepenuhnya
+    // Beri masa untuk DOM apply kelebaran 1122px sepenuhnya
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     const element = document.getElementById('pdf-content');
 
     const opt = {
-      margin: 5, // Margin 5mm
+      margin: 0, // Padding ditetapkan terus di dalam div content bagi memaksimumkan ruang PDF
       filename: `Borang_BKKP-06-03_${metadata.jabatan || 'Laporan'}.pdf`,
       image: { type: 'jpeg', quality: 1 },
       html2canvas: {
@@ -119,12 +119,10 @@ export default function App() {
         letterRendering: true,
         scrollY: 0,
         scrollX: 0, 
-        x: 0,
-        y: 0,
         windowWidth: 1122 // Memaksa format kanvas selebar A4 Landscape 
       },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-      pagebreak: { mode: ['css', 'legacy'] }
+      pagebreak: { mode: 'css' }
     };
 
     try {
@@ -1009,9 +1007,8 @@ export default function App() {
         <div 
           className={`bg-white ${isPdfGenerating ? 'shadow-none m-0 border-0' : 'p-8 md:p-10 shadow-lg mb-8'} flex flex-col relative`}
           style={{ 
-            // Tetapkan KUNCI SAIZ PIKSEL di sini supaya ia tidak sempit di dalam peranti mudah alih 
-            width: isPdfGenerating ? '1084px' : '100%', 
-            height: isPdfGenerating ? '755px' : 'auto', 
+            width: isPdfGenerating ? '1122px' : '100%', 
+            height: isPdfGenerating ? '792px' : 'auto', 
             padding: isPdfGenerating ? '40px' : undefined,
             boxSizing: 'border-box',
             pageBreakInside: 'avoid',
@@ -1148,7 +1145,7 @@ export default function App() {
     };
 
     return (
-      <div className={`bg-gray-100 min-h-screen py-8 print:py-0 print:bg-white flex justify-center pb-24 ${isPdfGenerating ? 'bg-white' : ''}`}>
+      <div className={`bg-gray-100 min-h-screen py-8 print:py-0 print:bg-white pb-24 ${isPdfGenerating ? 'bg-white block' : 'flex justify-center'}`}>
         
         <div className={`fixed bottom-0 left-0 right-0 md:top-0 md:bottom-auto bg-white border-t md:border-b border-gray-200 p-4 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.1)] md:shadow-md z-30 print:hidden ${isPdfGenerating ? 'hidden' : ''}`}>
           <div className="max-w-6xl mx-auto flex justify-between items-center px-2">
@@ -1180,8 +1177,8 @@ export default function App() {
         {/* CONTAINER KANDUNGAN PDF */}
         <div 
           id="pdf-content" 
-          className={isPdfGenerating ? 'bg-white absolute top-0 left-0 z-[-1]' : 'w-full max-w-6xl mx-auto md:mt-20'}
-          style={isPdfGenerating ? { width: '1084px', pointerEvents: 'none' } : {}}
+          className={isPdfGenerating ? 'bg-white' : 'w-full max-w-6xl mx-auto md:mt-20'}
+          style={isPdfGenerating ? { width: '1122px', minWidth: '1122px', margin: 0, padding: 0 } : {}}
         >
           {renderReportPages()}
         </div>
