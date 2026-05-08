@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ssn250-arch/eKitCare.git/static/css/main.2c313597.css",
+    "main.js": "/ssn250-arch/eKitCare.git/static/js/main.42c3b0a7.js",
+    "static/js/453.7fd97863.chunk.js": "/ssn250-arch/eKitCare.git/static/js/453.7fd97863.chunk.js",
+    "index.html": "/ssn250-arch/eKitCare.git/index.html",
+    "main.2c313597.css.map": "/ssn250-arch/eKitCare.git/static/css/main.2c313597.css.map",
+    "main.42c3b0a7.js.map": "/ssn250-arch/eKitCare.git/static/js/main.42c3b0a7.js.map",
+    "453.7fd97863.chunk.js.map": "/ssn250-arch/eKitCare.git/static/js/453.7fd97863.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2c313597.css",
+    "static/js/main.42c3b0a7.js"
+  ]
+}
