@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/ssn250-arch/eKitCare.git/static/css/main.2c313597.css",
-    "main.js": "/ssn250-arch/eKitCare.git/static/js/main.b9bc2078.js",
-    "static/js/453.9cfc3716.chunk.js": "/ssn250-arch/eKitCare.git/static/js/453.9cfc3716.chunk.js",
-    "index.html": "/ssn250-arch/eKitCare.git/index.html",
-    "main.2c313597.css.map": "/ssn250-arch/eKitCare.git/static/css/main.2c313597.css.map",
-    "main.b9bc2078.js.map": "/ssn250-arch/eKitCare.git/static/js/main.b9bc2078.js.map",
-    "453.9cfc3716.chunk.js.map": "/ssn250-arch/eKitCare.git/static/js/453.9cfc3716.chunk.js.map"
+    "main.css": "/ssn250-arch/eKitCare/static/css/main.2c313597.css",
+    "main.js": "/ssn250-arch/eKitCare/static/js/main.a0a46101.js",
+    "static/js/453.9cfc3716.chunk.js": "/ssn250-arch/eKitCare/static/js/453.9cfc3716.chunk.js",
+    "index.html": "/ssn250-arch/eKitCare/index.html",
+    "main.2c313597.css.map": "/ssn250-arch/eKitCare/static/css/main.2c313597.css.map",
+    "main.a0a46101.js.map": "/ssn250-arch/eKitCare/static/js/main.a0a46101.js.map",
+    "453.9cfc3716.chunk.js.map": "/ssn250-arch/eKitCare/static/js/453.9cfc3716.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.2c313597.css",
-    "static/js/main.b9bc2078.js"
+    "static/js/main.a0a46101.js"
   ]
 }
