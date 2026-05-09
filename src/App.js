@@ -94,7 +94,7 @@ export default function App() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isPdfGenerating, setIsPdfGenerating] = useState(false);
 
-  // --- LOGIK MUAT TURUN PDF ---
+  // --- LOGIK MUAT TURUN PDF (DIKEMAS KINI UNTUK KESTABILAN MUTLAK) ---
   const handleDownloadPDF = async () => {
     if (!window.html2pdf) {
       window.print();
@@ -102,24 +102,35 @@ export default function App() {
     }
 
     setIsDownloading(true);
+
+    // Langkah 1: Mematikan kebolehan zoom seketika pada telefon bimbit
+    const viewportMeta = document.querySelector('meta[name="viewport"]');
+    let originalViewport = '';
+    
+    if (viewportMeta) {
+      originalViewport = viewportMeta.getAttribute('content');
+      viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
+    }
+
+    // Langkah 2: Skrol paksa ke atas supaya koordinat Y=0
+    window.scrollTo(0, 0);
+
     setIsPdfGenerating(true);
 
-    // Beri masa untuk DOM apply kelebaran 1122px sepenuhnya
+    // Langkah 3: Beri masa untuk pelayar mobile mengaplikasikan layout berukuran 1122px lebar
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     const element = document.getElementById('pdf-content');
 
     const opt = {
-      margin: 0, // Padding ditetapkan terus di dalam div content bagi memaksimumkan ruang PDF
+      margin: 0, 
       filename: `Borang_BKKP-06-03_${metadata.jabatan || 'Laporan'}.pdf`,
       image: { type: 'jpeg', quality: 1 },
       html2canvas: {
         scale: 2,
         useCORS: true,
-        letterRendering: true,
-        scrollY: 0,
-        scrollX: 0, 
-        windowWidth: 1122 // Memaksa format kanvas selebar A4 Landscape 
+        letterRendering: true
+        // windowWidth dan scrollX/Y dibuang supaya ia mencari dimensi div element itu sendiri
       },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
       pagebreak: { mode: 'css' }
@@ -128,10 +139,14 @@ export default function App() {
     try {
       await window.html2pdf().set(opt).from(element).save();
     } catch (error) {
-      console.error("Error generating PDF:", error);
+      console.error("Ralat ketika menjana PDF:", error);
     } finally {
+      // Pulihkan paparan kembali seperti asal
       setIsDownloading(false);
       setIsPdfGenerating(false);
+      if (viewportMeta && originalViewport) {
+        viewportMeta.setAttribute('content', originalViewport);
+      }
     }
   };
 
@@ -1005,7 +1020,7 @@ export default function App() {
 
       return (
         <div 
-          className={`bg-white ${isPdfGenerating ? 'shadow-none m-0 border-0' : 'p-8 md:p-10 shadow-lg mb-8'} flex flex-col relative`}
+          className={`bg-white ${isPdfGenerating ? '' : 'p-8 md:p-10 shadow-lg mb-8'} flex flex-col relative`}
           style={{ 
             width: isPdfGenerating ? '1122px' : '100%', 
             height: isPdfGenerating ? '792px' : 'auto', 
@@ -1145,8 +1160,20 @@ export default function App() {
     };
 
     return (
-      <div className={`bg-gray-100 min-h-screen py-8 print:py-0 print:bg-white pb-24 ${isPdfGenerating ? 'bg-white block' : 'flex justify-center'}`}>
+      <div className={`bg-gray-100 min-h-screen py-8 print:py-0 print:bg-white pb-24 ${isPdfGenerating ? 'block overflow-x-auto' : 'flex justify-center'}`}>
         
+        {/* Lapis Memuat (Berbentuk Modal Kecil, bukan skrin penuh putih) */}
+        {isPdfGenerating && (
+          <div className="fixed inset-0 z-[9999] bg-slate-900/40 backdrop-blur-sm flex items-center justify-center">
+            <div className="bg-white p-8 rounded-2xl shadow-2xl flex flex-col items-center justify-center max-w-sm mx-4 border border-gray-100">
+               <Loader2 size={48} className="animate-spin text-blue-600 mb-4" />
+               <h2 className="text-xl font-bold text-slate-800 text-center">Memproses PDF...</h2>
+               <p className="text-sm text-slate-500 mt-2 font-medium text-center">Sila tunggu sebentar. Dokumen sedang dijana.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Butang Navigasi Bawah */}
         <div className={`fixed bottom-0 left-0 right-0 md:top-0 md:bottom-auto bg-white border-t md:border-b border-gray-200 p-4 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.1)] md:shadow-md z-30 print:hidden ${isPdfGenerating ? 'hidden' : ''}`}>
           <div className="max-w-6xl mx-auto flex justify-between items-center px-2">
             <button 
@@ -1176,11 +1203,15 @@ export default function App() {
 
         {/* CONTAINER KANDUNGAN PDF */}
         <div 
-          id="pdf-content" 
-          className={isPdfGenerating ? 'bg-white' : 'w-full max-w-6xl mx-auto md:mt-20'}
-          style={isPdfGenerating ? { width: '1122px', minWidth: '1122px', margin: 0, padding: 0 } : {}}
+          className={isPdfGenerating ? 'overflow-visible w-full' : 'w-full max-w-6xl mx-auto md:mt-20'}
         >
-          {renderReportPages()}
+          <div 
+            id="pdf-content" 
+            className="bg-white"
+            style={isPdfGenerating ? { width: '1122px', margin: 0, padding: 0 } : { width: '100%' }}
+          >
+            {renderReportPages()}
+          </div>
         </div>
         
       </div>
