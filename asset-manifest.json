@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/eKitCare/static/css/main.2ddea24b.css",
-    "main.js": "/eKitCare/static/js/main.74bc7050.js",
+    "main.css": "/eKitCare/static/css/main.fef14919.css",
+    "main.js": "/eKitCare/static/js/main.8599a1d9.js",
     "static/js/453.9cfc3716.chunk.js": "/eKitCare/static/js/453.9cfc3716.chunk.js",
     "index.html": "/eKitCare/index.html",
-    "main.2ddea24b.css.map": "/eKitCare/static/css/main.2ddea24b.css.map",
-    "main.74bc7050.js.map": "/eKitCare/static/js/main.74bc7050.js.map",
+    "main.fef14919.css.map": "/eKitCare/static/css/main.fef14919.css.map",
+    "main.8599a1d9.js.map": "/eKitCare/static/js/main.8599a1d9.js.map",
     "453.9cfc3716.chunk.js.map": "/eKitCare/static/js/453.9cfc3716.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2ddea24b.css",
-    "static/js/main.74bc7050.js"
+    "static/css/main.fef14919.css",
+    "static/js/main.8599a1d9.js"
   ]
 }
