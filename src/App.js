@@ -94,7 +94,7 @@ export default function App() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isPdfGenerating, setIsPdfGenerating] = useState(false);
 
-  // --- LOGIK MUAT TURUN PDF (DIKEMAS KINI UNTUK KESTABILAN MUTLAK) ---
+  // --- LOGIK MUAT TURUN PDF ---
   const handleDownloadPDF = async () => {
     if (!window.html2pdf) {
       window.print();
@@ -103,7 +103,6 @@ export default function App() {
 
     setIsDownloading(true);
 
-    // Langkah 1: Mematikan kebolehan zoom seketika pada telefon bimbit
     const viewportMeta = document.querySelector('meta[name="viewport"]');
     let originalViewport = '';
     
@@ -112,12 +111,10 @@ export default function App() {
       viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
     }
 
-    // Langkah 2: Skrol paksa ke atas supaya koordinat Y=0
     window.scrollTo(0, 0);
 
     setIsPdfGenerating(true);
 
-    // Langkah 3: Beri masa untuk pelayar mobile mengaplikasikan layout berukuran 1122px lebar
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     const element = document.getElementById('pdf-content');
@@ -130,7 +127,6 @@ export default function App() {
         scale: 2,
         useCORS: true,
         letterRendering: true
-        // windowWidth dan scrollX/Y dibuang supaya ia mencari dimensi div element itu sendiri
       },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
       pagebreak: { mode: 'css' }
@@ -141,7 +137,6 @@ export default function App() {
     } catch (error) {
       console.error("Ralat ketika menjana PDF:", error);
     } finally {
-      // Pulihkan paparan kembali seperti asal
       setIsDownloading(false);
       setIsPdfGenerating(false);
       if (viewportMeta && originalViewport) {
@@ -878,6 +873,11 @@ export default function App() {
 
       </div>
 
+      {/* Footer untuk Halaman Borang */}
+      <footer className="py-6 text-center text-gray-500 text-sm mt-4">
+        <p>&copy; {new Date().getFullYear()} Kolej Teknologi Termaju Jabatan Tenaga Manusia (ADTEC) Kampus Sandakan.<br className="md:hidden" /> Hak cipta terpelihara.</p>
+      </footer>
+
       {/* ACTION BAR - STICKY */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.1)] z-30">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
@@ -1020,7 +1020,7 @@ export default function App() {
 
       return (
         <div 
-          className={`bg-white ${isPdfGenerating ? '' : 'p-8 md:p-10 shadow-lg mb-8'} flex flex-col relative`}
+          className={`bg-white ${isPdfGenerating ? 'shadow-none m-0 border-0' : 'p-8 md:p-10 shadow-lg mb-8'} flex flex-col relative`}
           style={{ 
             width: isPdfGenerating ? '1122px' : '100%', 
             height: isPdfGenerating ? '792px' : 'auto', 
@@ -1095,8 +1095,8 @@ export default function App() {
                   <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-2xl' : 'text-xl'} font-bold`}>
                     {!item.isEmpty && item.status === 'Tidak Memuaskan' ? '✓' : ''}
                   </td>
-                  <td className={`border border-black px-2 py-0.5 text-left align-middle ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>{item.catatan || ''}</td>
-                  <td className={`border border-black px-2 py-0.5 text-left align-middle ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>{item.tindakan || ''}</td>
+                  <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>{item.catatan || ''}</td>
+                  <td className={`border border-black px-2 py-0.5 text-center align-middle ${isPdfGenerating ? 'text-sm' : 'text-xs'}`}>{item.tindakan || ''}</td>
                 </tr>
               ))}
             </tbody>
