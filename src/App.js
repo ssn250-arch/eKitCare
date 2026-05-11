@@ -68,20 +68,46 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState('');
   const [selectedImage, setSelectedImage] = useState(null); 
   
-  const [metadata, setMetadata] = useState({
-    jabatan: '',
-    namaPemeriksa: '',
-    tarikh: new Date().toISOString().split('T')[0]
+  // --- MENGGUNAKAN LOCAL STORAGE UNTUK AUTO-SAVE MAKLUMAT ---
+  const [metadata, setMetadata] = useState(() => {
+    const saved = localStorage.getItem('ekitcare_metadata');
+    if (saved) return JSON.parse(saved);
+    return {
+      jabatan: '',
+      namaPemeriksa: '',
+      tarikh: new Date().toISOString().split('T')[0]
+    };
   });
 
-  const [checklist, setChecklist] = useState(
-    standardItems.map(item => ({
+  const [checklist, setChecklist] = useState(() => {
+    const saved = localStorage.getItem('ekitcare_checklist');
+    if (saved) return JSON.parse(saved);
+    return standardItems.map(item => ({
       ...item,
       status: 'Memuaskan',
       catatan: '',
       tindakan: ''
-    }))
-  );
+    }));
+  });
+
+  // Effect Auto-Save setiap kali maklumat dan senarai berubah
+  useEffect(() => {
+    localStorage.setItem('ekitcare_metadata', JSON.stringify(metadata));
+  }, [metadata]);
+
+  useEffect(() => {
+    localStorage.setItem('ekitcare_checklist', JSON.stringify(checklist));
+  }, [checklist]);
+
+  // Fungsi untuk menetapkan semula borang sepenuhnya
+  const handleResetData = () => {
+    if(window.confirm("Adakah anda pasti mahu memadam semua rekod dan menetapkan semula borang ini?")) {
+      localStorage.removeItem('ekitcare_metadata');
+      localStorage.removeItem('ekitcare_checklist');
+      localStorage.removeItem('ekitcare_signature');
+      window.location.reload(); // Memuat semula halaman untuk cuci sepenuhnya
+    }
+  };
 
   // --- LOGIK MEMUATKAN PUSTAKA HTML2PDF ---
   useEffect(() => {
@@ -209,8 +235,21 @@ export default function App() {
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [signature, setSignature] = useState(null);
+  
+  // Gunakan Local Storage untuk menyimpan tandatangan
+  const [signature, setSignature] = useState(() => {
+    return localStorage.getItem('ekitcare_signature') || null;
+  });
   const [signatureMode, setSignatureMode] = useState('draw'); 
+
+  // Effect Auto-Save untuk Tandatangan
+  useEffect(() => {
+    if (signature) {
+      localStorage.setItem('ekitcare_signature', signature);
+    } else {
+      localStorage.removeItem('ekitcare_signature');
+    }
+  }, [signature]);
 
   const clearSignature = () => {
     if (signatureMode === 'draw') {
@@ -914,18 +953,26 @@ export default function App() {
       {/* ACTION BAR - STICKY */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.1)] z-30">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
-          <div className="w-full sm:w-auto">
+          <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center sm:space-x-4">
             {errorMsg ? (
-              <div className="text-red-600 text-xs sm:text-sm font-semibold flex items-center bg-red-50 px-3 py-2 rounded-lg">
+              <div className="text-red-600 text-xs sm:text-sm font-semibold flex items-center bg-red-50 px-3 py-2 rounded-lg mb-2 sm:mb-0">
                 <AlertCircle size={16} className="mr-2 flex-shrink-0" />
                 {errorMsg}
               </div>
             ) : (
-              <div className="text-gray-500 text-xs sm:text-sm hidden sm:block">
-                Pastikan semua maklumat tepat sebelum menjana borang.
+              <div className="text-gray-500 text-xs sm:text-sm hidden sm:block font-medium">
+                Sistem menyimpan auto (Auto-saved)
               </div>
             )}
+            
+            <button 
+              onClick={handleResetData}
+              className="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md transition-colors"
+            >
+              Set Semula Borang
+            </button>
           </div>
+
           <button 
             onClick={() => {
               if(!metadata.jabatan || !metadata.namaPemeriksa) {
