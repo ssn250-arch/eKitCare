@@ -43,7 +43,9 @@ const senaraiLokasi = [
   'Teknologi Fabrikasi Struktur Logam (Minyak & Gas)',
   'Pentadbiran',
   'BPSM',
-  'ASRAMA'
+  'Asrama Lelaki 1',
+  'Asrama Lelaki 2',
+  'Asrama Perempuan'
 ];
 
 const senaraiPemeriksa = [
