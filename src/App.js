@@ -3,7 +3,7 @@ import {
   ClipboardCheck, Printer, ArrowLeft, Save, CheckCircle, 
   AlertCircle, FileText, X, PenTool, Upload, Plus, 
   Trash2, Lock, Unlock, LogIn, Download, Loader2,
-  ChevronRight, Shield, Activity
+  ChevronRight, Shield, Activity, BookOpen, ExternalLink
 } from 'lucide-react';
 
 const standardItems = [
@@ -389,28 +389,59 @@ export default function App() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mt-16 md:mt-24 max-w-5xl mx-auto w-full">
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-blue-100 hover:shadow-md transition-all group">
+        {/* Ciri-ciri & Rujukan NIOSH (Telah diubah ke Grid 4-Lajur) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mt-16 md:mt-24 max-w-7xl mx-auto w-full">
+          {/* Card 1 */}
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-blue-100 hover:shadow-md transition-all group flex flex-col">
             <div className="bg-blue-50 w-14 h-14 rounded-xl flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform">
               <ClipboardCheck size={28} />
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-3">Semakan Digital</h3>
             <p className="text-slate-600 leading-relaxed text-sm md:text-base">Lakukan pemeriksaan senarai semak dengan pantas menggunakan peranti pintar anda tanpa memerlukan borang fizikal lagi.</p>
           </div>
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-green-100 hover:shadow-md transition-all group">
+          
+          {/* Card 2 */}
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-green-100 hover:shadow-md transition-all group flex flex-col">
             <div className="bg-green-50 w-14 h-14 rounded-xl flex items-center justify-center text-green-600 mb-6 group-hover:scale-110 transition-transform">
               <Shield size={28} />
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-3">Pengesahan Sah</h3>
             <p className="text-slate-600 leading-relaxed text-sm md:text-base">Sokongan tandatangan digital terbina dalam. Lukis atau muat naik tandatangan anda untuk pengesahan rasmi.</p>
           </div>
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-purple-100 hover:shadow-md transition-all group">
+          
+          {/* Card 3 */}
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-purple-100 hover:shadow-md transition-all group flex flex-col">
             <div className="bg-purple-50 w-14 h-14 rounded-xl flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform">
               <FileText size={28} />
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-3">Janaan PDF</h3>
             <p className="text-slate-600 leading-relaxed text-sm md:text-base">Laporan akan dijana dan diformat secara automatik ke dalam susun atur PDF dokumen BKKP-06-03 berkualiti tinggi.</p>
           </div>
+
+          {/* Card 4 - Garis Panduan NIOSH */}
+          <a 
+            href="https://drive.google.com/file/d/1q0k8_dcMjkTKjc5BDwSzUZ7TiWrxrX5e/view?usp=sharing" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 hover:border-red-200 hover:shadow-md transition-all group block relative overflow-hidden cursor-pointer flex flex-col"
+          >
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-red-50 to-transparent rounded-bl-full opacity-50 pointer-events-none"></div>
+            
+            <div className="bg-red-50 w-14 h-14 rounded-xl flex items-center justify-center text-red-600 mb-6 group-hover:scale-110 transition-transform relative z-10">
+              <BookOpen size={28} />
+            </div>
+            
+            <div className="flex flex-col flex-grow relative z-10">
+              <div className="flex items-center mb-2">
+                <span className="text-[10px] font-bold px-2 py-0.5 bg-red-100 text-red-700 rounded-full tracking-wide">RUJUKAN</span>
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3 flex items-start justify-between">
+                <span className="group-hover:text-red-600 transition-colors">Garis Panduan NIOSH</span>
+                <ExternalLink size={18} className="text-slate-400 group-hover:text-red-600 flex-shrink-0 mt-1 ml-2" />
+              </h3>
+              <p className="text-slate-600 leading-relaxed text-sm md:text-base">First Aid Kit In Workplace (2nd Edition). Klik untuk papar atau muat turun fail rujukan.</p>
+            </div>
+          </a>
         </div>
       </main>
 
